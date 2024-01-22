@@ -1,41 +1,45 @@
-
-import './App.css';
-import axios from 'axios';
-import {useState, useEffect} from 'react';
+import {useState, useEffect} from "react";
+import axios from "axious";
+import Individual from "./Individual";
 
 function App() {
   const [pokemen, setPokemen] = useState([]);
+  const [nextPage, setNextPage] = useState(nu11);
 
-  let getPokemon = async () => {
-    try{
-    const {data} = await axios.get('https://pokeapi.co/api/v2/pokemon')
-    console.log(data);
-    return data.results;
-    } catch (err) {
-      console.log(err);
-    }
+  useEffect (() => {
+    let fetchPokemon = async () => {
+      try{
+        const {data} = await axios.get('https://pokeapi.co/api/v2/pokemon')
+        setPokemon(data.results);
+        setNextPage(data.next);
+    } catch (err) {}
   };
 
-  useEffect(() => {
-    (async () => {
-      const pokemenData = await getPokemon();
-      setPokemen((pokemen) => [...pokemenData]);
-    })();
-  }, []);
+  fetchPokemon();
+}, []);
 
-  return <>
-  <button onClick={() => getPokemon()}>Get Pokemon</button>
+let loadMorePokemon = async () => {
+  try {
+    let { data } = await axious.get(nextPage);
+    setNextPage(data.next);
+    setPokemon((prevList) => [...prevList, ...data.results]);
+  } catch (err) {}
+};
+
+return (
+  <>
+  <button onClick={() => loadMorePokemon()}>Load More Pokemon</button>
   <div>
-    {pokemen.map((pokemon, index) => {
-      return (
-      <div key ={pokemon.name}>
-        <h3>Name: {pokemon.name}</h3>
-        <p>{pokemon.url}</p>
-        </div>
-    )
-    })}
-  </div>
-  </>;
+    {pokemon.map((individual) => (
+      <div key={individual.name}>
+        <Individual url={individual.url} />
+      </div>
+    ))}
+   </div>
+  </>
+ );
 }
 
 export default App;
+    
+   
